@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: ' ./', // <-- исправили на абсолютный путь
+  base: './', // ✅ ОБЯЗАТЕЛЬНО './', чтобы пути были относительными
   build: {
     outDir: 'dist',
-    sourcemap: true
+    emptyOutDir: true,
+    sourcemap: true,
   }
 });
