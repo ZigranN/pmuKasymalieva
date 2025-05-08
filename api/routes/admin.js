@@ -2,7 +2,7 @@ import express from "express";
 import {
     getAllAppointmentsForAdmin,
     updateAppointmentStatus,
-    deleteAppointment
+    deleteAppointment, getDashboardStats
 } from "../controllers/adminController.js";
 import { protect, adminOnly } from "../middlewares/authMiddleware.js";
 
@@ -16,5 +16,7 @@ router.patch("/appointments/:id", protect, adminOnly, updateAppointmentStatus);
 
 // ❌ Удаление записи
 router.delete("/appointments/:id", protect, adminOnly, deleteAppointment);
+
+router.get('/dashboard', getDashboardStats);
 
 export default router;

@@ -2,11 +2,6 @@ import Appointment from "../models/Appointment.js";
 import Service from "../models/Service.js";
 import User from "../models/User.js";
 
-/**
- * 📅 Получить все записи (с фильтрацией по дате, услуге, статусу)
- * @route GET /api/admin/appointments
- * @query { date, serviceId, status }
- */
 export const getAllAppointmentsForAdmin = async (req, res) => {
     try {
         const { date, serviceId, status } = req.query;
@@ -28,6 +23,7 @@ export const getAllAppointmentsForAdmin = async (req, res) => {
         res.status(500).json({ message: "Ошибка на сервере" });
     }
 };
+
 export const updateAppointmentStatus = async (req, res) => {
     try {
         const { id } = req.params;
@@ -72,5 +68,31 @@ export const deleteAppointment = async (req, res) => {
     } catch (error) {
         console.error("Ошибка при удалении записи:", error.message);
         res.status(500).json({ message: "Ошибка на сервере" });
+    }
+};
+
+export const getDashboardStats = async (req, res) => {
+    try {
+        // 1️⃣ Считаем количество пользователей
+        const totalUsers = await User.countDocuments();
+
+        // 2️⃣ Считаем количество записей
+        const totalAppointments = await Appointment.countDocuments();
+
+        // 3️⃣ Считаем количество услуг
+        const totalServices = await Service.countDocuments();
+
+        // 5️⃣ Формируем объект статистики
+        const stats = {
+            totalUsers,             // Количество пользователей
+            totalAppointments,      // Количество записей
+            totalServices,          // Количество услуг
+        };
+
+        // ✅ Возвращаем данные на фронтенд
+        res.status(200).json(stats);
+    } catch (error) {
+        console.error('Ошибка при получении статистики:', error.message);
+        res.status(500).json({ message: 'Ошибка на сервере' });
     }
 };

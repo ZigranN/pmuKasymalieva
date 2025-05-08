@@ -1,0 +1,47 @@
+.custom-modal {
+    border-radius: 10px;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.custom-form {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.custom-form .ant-input,
+.custom-form .ant-select-selector,
+.custom-form .ant-picker {
+    border-radius: 8px;
+    border-color: #d9d9d9;
+    transition: all 0.3s;
+}
+
+.custom-form .ant-input:focus,
+.custom-form .ant-select-selector:focus,
+.custom-form .ant-picker-focused {
+    border-color: #1677ff;
+    box-shadow: 0 0 5px rgba(22, 119, 255, 0.3);
+}
+
+.ant-btn-primary {
+    background-color: #1677ff;
+    border-color: #1677ff;
+    transition: all 0.3s;
+}
+
+.ant-btn-primary:hover {
+    background-color: #135baf;
+    border-color: #135baf;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

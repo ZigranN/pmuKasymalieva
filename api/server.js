@@ -11,6 +11,8 @@ import authRoutes from "./routes/auth.js";
 import telegramRoutes from "./routes/telegram.js";
 import serviceRoutes from "./routes/service.js";
 import calendarRoutes from "./routes/calendar.js";
+import userRoutes from "./routes/user.js";
+import adminRoutes from './routes/admin.js';
 
 // Загружаем конфигурацию
 dotenv.config();
@@ -30,8 +32,10 @@ app.use("/api/gallery", galleryRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/telegram", telegramRoutes);
-app.use("/api/service", serviceRoutes);
+app.use("/api/services", serviceRoutes);
 app.use("/api/calendar", calendarRoutes);
+app.use("/api/users", userRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Запускаем сервер
 const PORT = process.env.PORT || 5000;

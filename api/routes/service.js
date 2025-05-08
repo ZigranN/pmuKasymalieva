@@ -10,8 +10,8 @@ import { adminOnly, protect } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.get("/", getAllServices);                          // 🔎 Получить все услуги
-router.post("/", protect, adminOnly, createService);      // ➕ Создать новую услугу
-router.put("/:id", protect, adminOnly, updateService);    // ✏️ Обновить услугу
-router.delete("/:id", protect, adminOnly, deleteService); // ❌ Удалить услугу
+router.post("/",  createService);      // ➕ Создать новую услугу
+router.put("/:id",  updateService);    // ✏️ Обновить услугу
+router.delete("/:id", deleteService); // ❌ Удалить услугу
 
 export default router;

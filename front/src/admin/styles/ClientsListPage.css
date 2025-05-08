@@ -1,0 +1,89 @@
+/* Общий контейнер */
+.clients-list-container {
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Таблица */
+.ant-table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+    background-color: #fafafa;
+    font-weight: bold;
+    color: #595959;
+    text-align: center;
+}
+
+.ant-table-tbody > tr:hover {
+    background-color: #e6f7ff;
+}
+
+.custom-row {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Кнопки */
+.ant-btn-primary {
+    background-color: #1890ff;
+    border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+}
+
+.ant-btn-dangerous {
+    border-color: #ff4d4f;
+}
+
+.ant-btn-dangerous:hover {
+    background-color: #ff7875;
+    border-color: #ff7875;
+}
+
+/* Модалка информации о клиенте */
+.client-info-modal {
+    max-width: 100%;
+    overflow: auto;
+}
+
+.client-info-modal p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    padding: 5px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.client-info-modal p b {
+    color: #1890ff;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .clients-list-container {
+        padding: 8px;
+    }
+
+    .ant-table {
+        font-size: 12px;
+    }
+
+    .ant-btn {
+        font-size: 12px;
+    }
+
+    .ant-table-thead > tr > th {
+        font-size: 12px;
+    }
+
+    .client-info-modal p {
+        font-size: 12px;
+    }
+}

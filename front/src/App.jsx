@@ -1,12 +1,12 @@
-import {useState} from 'react'
+import React from 'react'
+import AdminRoutes from "./admin/routes/AdminRoutes.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-
-    </>
+      <>
+      <AdminRoutes />
+      </>
   )
 }
 

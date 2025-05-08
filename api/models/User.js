@@ -1,42 +1,21 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Имя обязательно"],
-        trim: true
-    },
-    email: {
-        type: String,
-        required: [true, "Email обязателен"],
-        unique: true,
-        trim: true
-    },
-    password: {
-        type: String,
-        required: [true, "Пароль обязателен"],
-        trim: true
-    },
-    isClient: {
-        type: Boolean,
-        default: true
-    }
+const UserSchema = new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String },
+    telegram: { type: String },  // Новый параметр
+    whatsapp: { type: String },  // Новый параметр
+    birthDate: { type: Date },
+    notes: { type: String },
+    comments: { type: String },
+    childrenCount: { type: Number },
+    childrenAge: [{ type: Number }],
+    firstAppointmentDate: { type: Date },
+    nextAppointmentDate: { type: Date },
+    serviceIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }],
+    additionalServiceIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Service' }]
 }, { timestamps: true });
 
-
-// 🔐 Хэширование пароля перед сохранением
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-});
-
-// ✅ Метод для сравнения пароля
-userSchema.methods.comparePassword = function (enteredPassword) {
-    return bcrypt.compare(enteredPassword, this.password);
-};
-
-const User = mongoose.model("User", userSchema);
-
-export default User;
+export default mongoose.model('User', UserSchema);

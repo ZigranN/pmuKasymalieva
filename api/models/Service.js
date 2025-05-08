@@ -16,9 +16,8 @@ const serviceSchema = new mongoose.Schema({
         min: [0, "Цена не может быть отрицательной"]
     },
     duration: {
-        type: Number, // длительность в минутах
+        type: String, // длительность в минутах
         required: [true, "Продолжительность обязательна"],
-        min: [15, "Минимальная продолжительность — 15 минут"]
     }
 }, { timestamps: true });
 
