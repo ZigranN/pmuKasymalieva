@@ -8,8 +8,8 @@ import DashboardStatistics from "../pages/DashboardStatistics.jsx";
 const AdminRoutes = () => {
     return (
         <Routes>
-            <Route path="/admin/*" element={<DashboardPage />}>
-                <Route path="dashboard" element={<DashboardStatistics />} />
+            <Route path="/" element={<DashboardPage />}>
+                <Route index element={<DashboardStatistics />} />
                 <Route path="services" element={<ServicesListPage />} />
                 <Route path="clients" element={<ClientsListPage />} />
             </Route>
@@ -18,4 +18,3 @@ const AdminRoutes = () => {
 };
 
 export default AdminRoutes;
-""
