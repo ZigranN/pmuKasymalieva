@@ -7,57 +7,99 @@ import {
 } from './servicesThunks';
 
 const initialState = {
-    services: [],
-    loading: false,
+    list: [],
+    fetchLoading: false,
+    createLoading: false,
+    updateLoading: false,
+    deleteLoading: false,
     error: null,
+    success: null
 };
 
 const servicesSlice = createSlice({
     name: 'services',
     initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            // Fetch All
-            .addCase(fetchServices.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchServices.fulfilled, (state, action) => {
-                state.loading = false;
-                state.services = action.payload;
-            })
-            .addCase(fetchServices.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-
-            // Create
-            .addCase(createService.fulfilled, (state, action) => {
-                state.services.push(action.payload);
-            })
-            .addCase(createService.rejected, (state, action) => {
-                state.error = action.payload;
-            })
-
-            // Update
-            .addCase(updateService.fulfilled, (state, action) => {
-                state.services = state.services.map((service) =>
-                    service._id === action.payload._id ? action.payload : service
-                );
-            })
-            .addCase(updateService.rejected, (state, action) => {
-                state.error = action.payload;
-            })
-
-            // Delete
-            .addCase(deleteService.fulfilled, (state, action) => {
-                state.services = state.services.filter((service) => service._id !== action.payload);
-            })
-            .addCase(deleteService.rejected, (state, action) => {
-                state.error = action.payload;
-            });
+    reducers: {
+        clearServiceMessages: (state) => {
+            state.error = null;
+            state.success = null;
+        }
     },
+    extraReducers: (builder) => {
+        // 🔹 Загрузка списка услуг
+        builder.addCase(fetchServices.pending, (state) => {
+            state.fetchLoading = true;
+            state.error = null;
+        });
+        builder.addCase(fetchServices.fulfilled, (state, { payload }) => {
+            state.fetchLoading = false;
+            state.list = payload;
+        });
+        builder.addCase(fetchServices.rejected, (state, action) => {
+            state.fetchLoading = false;
+            state.error = action.payload;
+        });
+
+        // 🔹 Создание услуги
+        builder.addCase(createService.pending, (state) => {
+            state.createLoading = true;
+            state.error = null;
+        });
+        builder.addCase(createService.fulfilled, (state, { payload }) => {
+            state.createLoading = false;
+            state.list.push(payload);
+            state.success = "Услуга успешно добавлена";
+        });
+        builder.addCase(createService.rejected, (state, action) => {
+            state.createLoading = false;
+            state.error = action.payload;
+        });
+
+        // 🔹 Обновление услуги
+        builder.addCase(updateService.pending, (state) => {
+            state.updateLoading = true;
+            state.error = null;
+        });
+        builder.addCase(updateService.fulfilled, (state, { payload }) => {
+            state.updateLoading = false;
+            const index = state.list.findIndex((service) => service._id === payload._id);
+            if (index !== -1) {
+                state.list[index] = payload;
+            }
+            state.success = "Услуга успешно обновлена";
+        });
+        builder.addCase(updateService.rejected, (state, action) => {
+            state.updateLoading = false;
+            state.error = action.payload;
+        });
+
+        // 🔹 Удаление услуги
+        builder.addCase(deleteService.pending, (state) => {
+            state.deleteLoading = true;
+            state.error = null;
+        });
+        builder.addCase(deleteService.fulfilled, (state, { payload }) => {
+            state.deleteLoading = false;
+            state.list = state.list.filter((service) => service._id !== payload);
+            state.success = "Услуга успешно удалена";
+        });
+        builder.addCase(deleteService.rejected, (state, action) => {
+            state.deleteLoading = false;
+            state.error = action.payload;
+        });
+    }
 });
 
-export default servicesSlice.reducer;
+// 🔹 Экспорт редьюсера и экшенов
+export const { clearServiceMessages } = servicesSlice.actions;
+export const servicesReducer = servicesSlice.reducer;
+
+// 🔹 Селекторы
+export const selectServices = (state) => state.services.list;
+export const selectServicesFetchLoading = (state) => state.services.fetchLoading;
+export const selectCreateLoading = (state) => state.services.createLoading;
+export const selectUpdateLoading = (state) => state.services.updateLoading;
+export const selectDeleteLoading = (state) => state.services.deleteLoading;
+export const selectServicesError = (state) => state.services.error;
+export const selectServicesSuccess = (state) => state.services.success;
+

@@ -3,7 +3,7 @@ import { Layout, Menu } from 'antd';
 import {
     AppstoreOutlined,
     TeamOutlined,
-    ShopOutlined
+    ShopOutlined, UserOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -17,7 +17,7 @@ const MainLayout = styled(Layout)`
 const StyledContent = styled(Content)`
     margin: 0;
     padding: 24px;
-    width: 70vw;
+    width: 80vw;
     background-color: #fff;
     flex: 1;
     display: flex;
@@ -31,6 +31,7 @@ const DashboardPage = () => {
         { key: 'dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
         { key: 'services', icon: <ShopOutlined />, label: 'Services' },
         { key: 'clients', icon: <TeamOutlined />, label: 'Clients' },
+        { key: 'masters', icon: <UserOutlined />, label: 'Masters' },
     ];
 
     const handleMenuClick = (e) => {

@@ -1,25 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, message, Tooltip, Spin, Alert } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { EditOutlined, DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useAppDispatch, useAppSelector } from "../../app/hooks.js";
+import { fetchUsers, deleteUser } from "../features/users/usersThunk.js";
+import {
+    selectUsers,
+    selectFetchLoading,
+    selectUsersError,
+    clearUserMessages
+} from "../features/users/usersSlice.js";
+import ClientModal from "../components/ClientModal.jsx";
+import ClientInfoModal from "../components/ClientInfoModal.jsx";
 import dayjs from 'dayjs';
-import AddClientModal from "../components/AddClientModal.jsx";
-import EditClientModal from "../components/EditClientModal.jsx";
-import { deleteUser, fetchUsers } from "../features/users/usersThunk.js";
 import './../styles/ClientsListPage.css';
 
 const ClientsListPage = () => {
-    const dispatch = useDispatch();
-    const { users, loading, error } = useSelector((state) => state.users);
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-    const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-    const [isClientModalVisible, setIsClientModalVisible] = useState(false);
-    const [selectedClient, setSelectedClient] = useState(null);
+    const dispatch = useAppDispatch();
 
+    // ✅ Селекторы
+    const users = useAppSelector(selectUsers);
+    const loading = useAppSelector(selectFetchLoading);
+    const error = useAppSelector(selectUsersError);
+
+    // ✅ Состояния модалок
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isInfoModalVisible, setIsInfoModalVisible] = useState(false);
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
+
+    // ✅ Первичная загрузка пользователей
     useEffect(() => {
         dispatch(fetchUsers());
     }, [dispatch]);
 
+    useEffect(() => {
+        if (error) {
+            message.error(`Ошибка при загрузке данных: ${error}`);
+            dispatch(clearUserMessages());
+        }
+    }, [error, dispatch]);
+
+    // ✅ Обработчики модалок
+    const openEditModal = (client) => {
+        setSelectedClient(client);
+        setIsEditMode(true);
+        setIsModalVisible(true);
+    };
+
+    const openAddModal = () => {
+        setSelectedClient(null);
+        setIsEditMode(false);
+        setIsModalVisible(true);
+    };
+
+    const openInfoModal = (client) => {
+        setSelectedClient(client);
+        setIsInfoModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setSelectedClient(null);
+        setIsEditMode(false);
+    };
+
+    const closeInfoModal = () => {
+        setIsInfoModalVisible(false);
+        setSelectedClient(null);
+    };
+
+    // ✅ Удаление клиента с подтверждением
     const handleDelete = (id) => {
         Modal.confirm({
             title: 'Удалить клиента',
@@ -28,8 +78,7 @@ const ClientsListPage = () => {
             cancelText: 'Отмена',
             onOk: async () => {
                 try {
-                    await dispatch(deleteUser(id));
-                    await dispatch(fetchUsers());
+                    await dispatch(deleteUser(id)).unwrap();
                     message.success('Клиент успешно удалён');
                 } catch (error) {
                     message.error('Ошибка при удалении клиента');
@@ -38,27 +87,7 @@ const ClientsListPage = () => {
         });
     };
 
-    const handleEdit = (client) => {
-        setSelectedClient(client);
-        setIsEditModalVisible(true);
-    };
-
-    const handleAddClient = () => {
-        setIsAddModalVisible(true);
-    };
-
-    const closeModals = () => {
-        setIsEditModalVisible(false);
-        setIsAddModalVisible(false);
-        setIsClientModalVisible(false);
-        setSelectedClient(null);
-    };
-
-    const handleClientInfo = (client) => {
-        setSelectedClient(client);
-        setIsClientModalVisible(true);
-    };
-
+    // ✅ Описание колонок таблицы
     const columns = [
         {
             title: 'Имя',
@@ -97,7 +126,7 @@ const ClientsListPage = () => {
                             icon={<InfoCircleOutlined />}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleClientInfo(record);
+                                openInfoModal(record);
                             }}
                         />
                     </Tooltip>
@@ -107,7 +136,7 @@ const ClientsListPage = () => {
                             icon={<EditOutlined />}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleEdit(record);
+                                openEditModal(record);
                             }}
                         />
                     </Tooltip>
@@ -126,9 +155,15 @@ const ClientsListPage = () => {
         },
     ];
 
+    // ✅ Рендер страницы
     return (
         <div className="clients-list-container">
-            <Button type='primary' style={{ marginBottom: 16 }} onClick={handleAddClient}>
+            <Button
+                type='primary'
+                icon={<PlusOutlined />}
+                style={{ marginBottom: 16 }}
+                onClick={openAddModal}
+            >
                 Добавить клиента
             </Button>
 
@@ -146,44 +181,23 @@ const ClientsListPage = () => {
                 />
             )}
 
-            {isEditModalVisible && (
-                <EditClientModal
-                    isVisible={isEditModalVisible}
-                    onClose={closeModals}
+            {/* ✅ Модалка редактирования или создания */}
+            {isModalVisible && (
+                <ClientModal
+                    isVisible={isModalVisible}
+                    onClose={closeModal}
+                    client={selectedClient}
+                    isEditMode={isEditMode}
+                />
+            )}
+
+            {/* ✅ Модалка просмотра информации */}
+            {isInfoModalVisible && (
+                <ClientInfoModal
+                    isVisible={isInfoModalVisible}
+                    onClose={closeInfoModal}
                     client={selectedClient}
                 />
-            )}
-
-            {isAddModalVisible && (
-                <AddClientModal
-                    isVisible={isAddModalVisible}
-                    onClose={closeModals}
-                />
-            )}
-
-            {isClientModalVisible && selectedClient && (
-                <Modal
-                    title={` ${selectedClient.firstName} ${selectedClient.lastName}`}
-                    open={isClientModalVisible}
-                    footer={null}
-                    onCancel={closeModals}
-                    className="client-info-modal"
-
-                >
-                    <p><b>Телефон:</b> {selectedClient.phone}</p>
-                    <p><b>Почта:</b> {selectedClient.email}</p>
-                    <p><b>Telegram:</b> {selectedClient.telegram || '-'}</p>
-                    <p><b>WhatsApp:</b> {selectedClient.whatsapp || '-'}</p>
-                    <p><b>Дата рождения:</b> {selectedClient.birthDate ? dayjs(selectedClient.birthDate).format('DD.MM.YYYY') : '-'}</p>
-                    <p><b>Заметки:</b> {selectedClient.notes || '-'}</p>
-                    <p><b>Комментарии:</b> {selectedClient.comments || '-'}</p>
-                    <p><b>Количество детей:</b> {selectedClient.childrenCount || '-'}</p>
-                    <p><b>Возраст детей:</b> {selectedClient.childrenAge?.join(', ') || '-'}</p>
-                    <p><b>Дата записи:</b> {selectedClient.firstAppointmentDate ? dayjs(selectedClient.firstAppointmentDate).format('DD.MM.YYYY') : '-'}</p>
-                    <p><b>Следующая запись:</b> {selectedClient.nextAppointmentDate ? dayjs(selectedClient.nextAppointmentDate).format('DD.MM.YYYY') : '-'}</p>
-                    <p><b>Услуги:</b> {selectedClient.serviceIds?.map((service) => service.name).join(', ') || '-'}</p>
-                    <p><b>Дополнительные услуги:</b> {selectedClient.additionalServiceIds?.map((service) => service.name).join(', ') || '-'}</p>
-                </Modal>
             )}
         </div>
     );

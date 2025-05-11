@@ -13,6 +13,7 @@ import serviceRoutes from "./routes/service.js";
 import calendarRoutes from "./routes/calendar.js";
 import userRoutes from "./routes/user.js";
 import adminRoutes from './routes/admin.js';
+import masterRoutes from './routes/master.js';
 
 // Загружаем конфигурацию
 dotenv.config();
@@ -36,6 +37,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/users", userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/masters', masterRoutes);
 
 // Запускаем сервер
 const PORT = process.env.PORT || 5000;
