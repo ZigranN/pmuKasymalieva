@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Statistic, Row, Col } from "antd";
+import axiosApi from "../../../axiosApi.js";
 
 const DashboardStatistics = () => {
     const [stats, setStats] = useState({});
@@ -8,7 +9,7 @@ const DashboardStatistics = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const { data } = await axios.get("http://localhost:5000/api/admin/dashboard");
+                const { data } = await axiosApi.get("/api/admin/dashboard");
                 setStats(data);
             } catch (error) {
                 console.error("Ошибка загрузки статистики", error);
